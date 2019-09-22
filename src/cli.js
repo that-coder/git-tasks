@@ -2,6 +2,7 @@ import arg from 'arg';
 const inquirer = require('inquirer');
 const chalk = require('chalk');
 const figlet = require('figlet');
+const requestify = require('requestify');
 
 function parseArguments(rawArgs) {
   let args = rawArgs
@@ -62,5 +63,22 @@ export function cli(args) {
 }
 
 function gitlab() {
-  cons
+  let key = 'paste key';
+  console.log('here...')
+  try {
+    requestify.request(' https://gitlab.example.com/api/v4/projects', {
+      method: 'GET',
+      headers: {
+        'Private-Token': key
+      }
+    })
+      .then(function (response) {
+        console.log(response)
+        // get the raw response body
+        response.body;
+      });
+  }
+  catch (e) {
+    console.log(e)
+  }
 }
