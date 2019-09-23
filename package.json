@@ -7,8 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "gtasks": "bin/index.js",
-    "git-tasks": "bin/index.js"
+    "gtask": "bin/index.js",
+    "git-task": "bin/index.js"
   },
   "publishConfig": {
     "access": "public",

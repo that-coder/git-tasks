@@ -23,7 +23,7 @@ function parseArguments(rawArgs) {
             {
               type: 'rawlist',
               name: 'source',
-              message: 'Choose you project tracking service:',
+              message: 'Choose you project management service:',
               choices: ["1. Gitlab", "2. Trello", "3. Bitbucket", "4. Github"]
             },
           ])
@@ -63,20 +63,50 @@ export function cli(args) {
 }
 
 function gitlab() {
-  let key = 'paste key';
-  console.log('here...')
   try {
-    requestify.request(' https://gitlab.example.com/api/v4/projects', {
-      method: 'GET',
-      headers: {
-        'Private-Token': key
+    inquirer.prompt([
+      {
+        type: 'input',
+        name: 'source',
+        message: 'Search project name:'
       }
+    ]).then(option => {
+      let gitlab_url = "https://gitlab.com/api/v4/projects?private_token=&visibility=private&simple=true&archived=false" + `&search=` + option.source
+      requestify.request(gitlab_url, {
+        method: 'GET'
+      })
+        .then(function (resp) {
+          // console.log(resp)
+          let response = JSON.parse(resp.body);
+          // console.log(response)
+          if (response.length === 0) {
+            console.log('Warning, no project found!')
+          }
+          else {
+            inquirer
+              .prompt([
+                {
+                  type: 'rawlist',
+                  name: 'source',
+                  message: 'Choose you project:',
+                  choices: response
+                },
+
+              ])
+              .then(option => {
+                // console.log(option)
+                var projectid;
+                response.forEach(element => {
+                  // console.log(element)
+                  if (element.name === option.source) {
+                    projectid = element.id;
+                  }
+                });
+                console.log('project ID:', projectid)
+              });
+          }
+        });
     })
-      .then(function (response) {
-        console.log(response)
-        // get the raw response body
-        response.body;
-      });
   }
   catch (e) {
     console.log(e)
